@@ -1,8 +1,8 @@
 const student_names = ["Mehpreet Kaur", "Bhavroop Kaur", "kwkdvbliuahjnb", ";ndvr;i", "aeilfjgv"];
-const namesDiv = document.getElementById("names");
+const namesList = document.getElementById("names");
 
 student_names.forEach(name => {
-  const label = document.createElemtent("label");
+  const label = document.createElement("label");
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.name = "attendance";
