@@ -13,7 +13,7 @@ student_names.forEach(name => {
   label.appendChild(document.createTextNode(" " + name));
 
   // Add the label to the page, and a line break
-  nameList.appendChild(label);
-  nameList.appendChild(document.createElement("br"));
+  namesList.appendChild(label);
+  namesList.appendChild(document.createElement("br"));
   
 });
