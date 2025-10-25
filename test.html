@@ -5,102 +5,107 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Working Quote Carousel</title>
 <style>
-  .carousel-container {
-  width: 500px;           /* Adjust size as needed */
-  margin: 40px auto;
-  text-align: center;
-  position: relative;
-}
+  body {
+    margin: 0;
+    background: #0d1b2a;
+    color: white;
+    font-family: system-ui, sans-serif;
+  }
+  
+  /* Full-width carousel */
+  .carousel {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 260px;
+    background: #1b263b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Slides container */
+  .slides {
+    display: flex;
+    width: 100%;
+    transition: transform 0.7s ease-in-out;
+  }
+  
+  /* Each slide */
+  .slide {
+    flex: 0 0 100%;
+    text-align: center;
+    font-size: 1.4rem;
+    font-style: italic;
+    padding: 60px 20px;
+    background: #415a77;
+  }
+  
+  /* Arrows */
+  .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    font-size: 30px;
+    padding: 8px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.3s;
+  }
+  
+  .arrow:hover {
+    background: rgba(255,255,255,0.35);
+  }
+  
+  .prev { left: 20px; }
+  .next { right: 20px; }
+  
+  /* Dots */
+  .dots {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    background: #aaa;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .dot.active {
+    background: #ffcc00;
+  }
 
-.carousel {
-  position: relative;
-  overflow: hidden;
-  border-radius: 10px;
-  background: #1b263b;
-  color: white;
-}
-
-.slides {
-  display: flex;
-  transition: transform 0.6s ease-in-out;
-  width: 100%;
-}
-
-.slide {
-  min-width: 100%;
-  padding: 60px 0;
-  font-size: 1.5rem;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #415a77;
-}
-
-.arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.2);
-  border: none;
-  color: white;
-  font-size: 24px;
-  padding: 8px 14px;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 10;
-  transition: background 0.3s;
-}
-
-.arrow:hover {
-  background: rgba(255,255,255,0.4);
-}
-
-.prev { left: 10px; }
-.next { right: 10px; }
-
-.dots {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-  gap: 10px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  background: #ccc;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.dot.active {
-  background: #ffcc00;
-}
 
 </style>
 </head>
 <body>
 
 <section>
-  <div class="carousel-container">
-    <div class="carousel">
-      <div class="slides">
-        <div class="slide active">Slide 1</div>
-        <div class="slide">Slide 2</div>
-        <div class="slide">Slide 3</div>
-      </div>
-  
-      <button class="arrow prev">&#8249;</button>
-      <button class="arrow next">&#8250;</button>
-    </div>
-  
-    <div class="dots">
-      <span class="dot active" data-slide="0"></span>
-      <span class="dot" data-slide="1"></span>
-      <span class="dot" data-slide="2"></span>
-    </div>
+  <div class="slides">
+    <div class="slide">“The best way to predict the future is to invent it.” – Alan Kay</div>
+    <div class="slide">“In the middle of difficulty lies opportunity.” – Albert Einstein</div>
+    <div class="slide">“Strive not to be a success, but rather to be of value.” – Albert Einstein</div>
+  </div>
+
+  <button class="arrow prev">&#8249;</button>
+  <button class="arrow next">&#8250;</button>
+
+  <div class="dots">
+    <span class="dot active" data-slide="0"></span>
+    <span class="dot" data-slide="1"></span>
+    <span class="dot" data-slide="2"></span>
   </div>
 
 </section>
@@ -109,43 +114,87 @@
 
 <a href="index.html>ttjttjj</a>
 <script>
+  const slidesContainer = document.querySelector('.slides');
   const slides = document.querySelectorAll('.slide');
-  const dots = document.querySelectorAll('.dot');
   const nextBtn = document.querySelector('.next');
   const prevBtn = document.querySelector('.prev');
+  const dots = document.querySelectorAll('.dot');
   
-  let index = 0;
+  let index = 1; // Start from the first "real" slide (after the clone)
+  let interval;
   
-  function showSlide(n) {
-    if (n < 0) index = slides.length - 1;
-    else if (n >= slides.length) index = 0;
-    else index = n;
+  // Clone first and last slides for seamless looping
+  const firstClone = slides[0].cloneNode(true);
+  const lastClone = slides[slides.length - 1].cloneNode(true);
+  slidesContainer.appendChild(firstClone);
+  slidesContainer.insertBefore(lastClone, slidesContainer.firstChild);
   
-    const offset = -index * 100;
-    document.querySelector('.slides').style.transform = `translateX(${offset}%)`;
+  const allSlides = document.querySelectorAll('.slide');
+  slidesContainer.style.transform = `translateX(-100%)`;
   
-    slides.forEach((s, i) => s.classList.toggle('active', i === index));
-    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+  // Update active dot
+  function updateDots() {
+    dots.forEach((d, i) => d.classList.toggle('active', i === ((index - 1 + slides.length) % slides.length)));
   }
   
-  nextBtn.addEventListener('click', () => showSlide(index + 1));
-  prevBtn.addEventListener('click', () => showSlide(index - 1));
+  // Move to slide
+  function moveToSlide() {
+    slidesContainer.style.transition = "transform 0.7s ease-in-out";
+    slidesContainer.style.transform = `translateX(-${index * 100}%)`;
+    updateDots();
+  }
   
-  dots.forEach(dot => {
+  // Next / Prev controls
+  function nextSlide() {
+    index++;
+    moveToSlide();
+  }
+  
+  function prevSlide() {
+    index--;
+    moveToSlide();
+  }
+  
+  // Handle looping transitions
+  slidesContainer.addEventListener('transitionend', () => {
+    if (allSlides[index].textContent === firstClone.textContent) {
+      slidesContainer.style.transition = "none";
+      index = 1;
+      slidesContainer.style.transform = `translateX(-100%)`;
+    }
+    if (allSlides[index].textContent === lastClone.textContent) {
+      slidesContainer.style.transition = "none";
+      index = slides.length;
+      slidesContainer.style.transform = `translateX(-${index * 100}%)`;
+    }
+  });
+  
+  // Dots click
+  dots.forEach((dot, i) => {
     dot.addEventListener('click', () => {
-      const slideNum = parseInt(dot.getAttribute('data-slide'));
-      showSlide(slideNum);
+      index = i + 1;
+      moveToSlide();
     });
   });
   
-  // Optional autoplay (every 5s)
-  let autoPlay = setInterval(() => showSlide(index + 1), 5000);
+  // Autoplay every 5 seconds
+  function startAutoPlay() {
+    interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+  }
+  function stopAutoPlay() {
+    clearInterval(interval);
+  }
+  startAutoPlay();
   
-  // Pause on hover
-  document.querySelector('.carousel').addEventListener('mouseenter', () => clearInterval(autoPlay));
-  document.querySelector('.carousel').addEventListener('mouseleave', () => {
-    autoPlay = setInterval(() => showSlide(index + 1), 5000);
-  });
+  // Pause autoplay on hover
+  document.querySelector('.carousel').addEventListener('mouseenter', stopAutoPlay);
+  document.querySelector('.carousel').addEventListener('mouseleave', startAutoPlay);
+  
+  // Buttons
+  nextBtn.addEventListener('click', nextSlide);
+  prevBtn.addEventListener('click', prevSlide);
 
 </script>
 </body>
