@@ -1,128 +1,198 @@
-body {
-  font-family: "Poppins", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #0d1b2a;
-  color: #f0e9d2;
-  margin: 0;
-}
+:root{
+    --w: 460px;
+    --h: 220px;
+    --dot-size: 12px;
+    --accent: #e0a82e;
+    --bg: #1b263b;
+    --card-bg: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.04));
+  }
 
-.carousel {
-  width: 400px;
-  height: 200px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 20px;
-  background: #1b263b;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
+  *{box-sizing:border-box}
+  body{
+    height:100vh;
+    margin:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Inter, system-ui, sans-serif;
+    background:#0d1b2a;
+    color:#f0e9d2;
+  }
 
-/* Hide radio inputs */
-input[type="radio"] {
-  display: none;
-}
+  .carousel{
+    width:var(--w);
+    height:var(--h);
+    position:relative;
+    overflow:hidden;
+    border-radius:14px;
+    background:var(--bg);
+    box-shadow:0 6px 24px rgba(0,0,0,0.5);
+    padding:18px;
+  }
 
-/* Container for all slides */
-.slides {
-  display: flex;
-  width: 300%;
-  height: 100%;
-  transition: transform 1s ease;
-}
+  /* hide the radios */
+  .carousel input[type="radio"]{ display:none }
 
-/* Each quote */
-.quote {
-  width: 100%;
-  padding: 40px;
-  box-sizing: border-box;
-  text-align: center;
-}
+  /* slides wrapper (3 slides) */
+  .slides{
+    display:flex;
+    height:100%;
+    width:300%;
+    /* autoplay animation */
+    animation: autoplay 12s linear infinite;
+    /* let transforms animate smoothly when switching by radio */
+    transition: transform 0.6s cubic-bezier(.22,.9,.3,1);
+  }
 
-.quote p {
-  font-size: 1.1rem;
-  font-style: italic;
-}
+  .slide{
+    width:calc(100% / 3);
+    padding:22px;
+    box-sizing:border-box;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
 
-.quote h3 {
-  margin-top: 15px;
-  font-weight: 400;
-  color: #e0a82e;
-}
+  .quote{
+    width:100%;
+    background:var(--card-bg);
+    border-radius:10px;
+    padding:18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  }
 
-/* Slide position control via radio buttons */
-#slide1:checked ~ .slides {
-  transform: translateX(0);
-}
-#slide2:checked ~ .slides {
-  transform: translateX(-100%);
-}
-#slide3:checked ~ .slides {
-  transform: translateX(-200%);
-}
+  .quote p{
+    margin:0;
+    font-style:italic;
+    font-size:1.05rem;
+    line-height:1.4;
+  }
+  .quote h3{
+    margin:12px 0 0 0;
+    font-weight:500;
+    color:var(--accent);
+    font-size:0.95rem;
+  }
 
-/* Navigation dots */
-.nav-dots {
-  position: absolute;
-  bottom: 15px;
-  width: 100%;
-  text-align: center;
-}
+  /* autoplay keyframes: 0 -> slide1 -> slide2 -> slide3 -> back */
+  @keyframes autoplay{
+    0%   { transform: translateX(0%); }
+    25%  { transform: translateX(0%); }
+    33%  { transform: translateX(-100%); }
+    58%  { transform: translateX(-100%); }
+    66%  { transform: translateX(-200%); }
+    91%  { transform: translateX(-200%); }
+    100% { transform: translateX(0%); }
+  }
 
-.dot {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #aaa;
-  margin: 0 5px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+  /* ——— Manual control: when a radio is checked, pause animation and force slide position ——— */
+  /* pause animation whenever any radio is checked */
+  #slide1:checked ~ .slides,
+  #slide2:checked ~ .slides,
+  #slide3:checked ~ .slides {
+    animation-play-state: paused;
+  }
 
-#slide1:checked ~ .nav-dots label[for="slide1"],
-#slide2:checked ~ .nav-dots label[for="slide2"],
-#slide3:checked ~ .nav-dots label[for="slide3"] {
-  background: #e0a82e;
-}
+  /* force transforms for each checked radio (override autoplay) */
+  #slide1:checked ~ .slides { transform: translateX(0%); }
+  #slide2:checked ~ .slides { transform: translateX(-100%); }
+  #slide3:checked ~ .slides { transform: translateX(-200%); }
 
-/* Arrows */
-.arrows label {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 2rem;
-  color: #e0a82e;
-  cursor: pointer;
-  transition: 0.3s;
-  user-select: none;
-}
+  /* ——— Navigation dots ——— */
+  .dots{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:12px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    pointer-events:auto;
+  }
+  .dot{
+    width:var(--dot-size);
+    height:var(--dot-size);
+    border-radius:50%;
+    background:#9aa6b4;
+    display:inline-block;
+    cursor:pointer;
+    transition:transform .18s, background .18s;
+  }
+  .dot:hover{ transform:scale(1.08) }
 
-.arrows .prev {
-  left: 15px;
-}
+  /* highlight the active dot using radios */
+  #slide1:checked ~ .dots label[for="slide1"],
+  #slide2:checked ~ .dots label[for="slide2"],
+  #slide3:checked ~ .dots label[for="slide3"] {
+    background:var(--accent);
+    transform:scale(1.12);
+  }
 
-.arrows .next {
-  right: 15px;
-}
+  /* make dots clickable */
+  .dots label{ display:inline-block }
 
-.arrows label:hover {
-  color: #fff;
-}
+  /* ——— Arrows ———
+     We create a set of prev/next labels for each slide and show only the pair that corresponds
+     to the currently active slide. This allows "previous" from slide1 to wrap to slide3 etc.
+  */
+  .arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:22px;
+    width:36px;
+    height:36px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    user-select:none;
+    cursor:pointer;
+    background:rgba(0,0,0,0.06);
+    color:var(--accent);
+    transition:transform .12s, background .12s;
+  }
+  .arrow:hover{ transform:translateY(-50%) scale(1.05); background:rgba(0,0,0,0.12) }
+  .prev{ left:12px }
+  .next{ right:12px }
 
-/* Auto-slide animation */
-@keyframes auto {
-  0%, 33%   { transform: translateX(0); }
-  34%, 66%  { transform: translateX(-100%); }
-  67%, 99%  { transform: translateX(-200%); }
-  100%      { transform: translateX(0); }
-}
+  /* hide all arrow labels by default, we'll show the relevant pair for each checked slide */
+  .arrows label{ display:none; }
 
-/* Auto-play effect */
-.slides {
-  animation: auto 12s infinite;
-}
+  /* show arrows for slide1 */
+  #slide1:checked ~ .arrows label[for="slide3"],
+  #slide1:checked ~ .arrows label[for="slide2"] {
+    display:flex;
+  }
+  /* show arrows for slide2 */
+  #slide2:checked ~ .arrows label[for="slide1"],
+  #slide2:checked ~ .arrows label[for="slide3"] {
+    display:flex;
+  }
+  /* show arrows for slide3 */
+  #slide3:checked ~ .arrows label[for="slide2"],
+  #slide3:checked ~ .arrows label[for="slide1"] {
+    display:flex;
+  }
+
+  /* When no radio is checked (initial autoplay) show a default set pointing to 2/3:
+     We make these visible when none of the hidden radios are :checked. We can't directly say "none checked"
+     so we make a simple fallback by showing arrows when #slide1 is NOT checked, ... but the cleanest approach
+     is to set #slide1 to be checked by default in the HTML (we do). Still, to ensure arrows appear initially
+     we duplicate a default arrow and show it when animation is running.
+  */
+  /* small responsive tweak */
+  @media (max-width:520px){
+    :root{ --w: 92vw; --h: 240px }
+    .quote p{ font-size:0.98rem }
+  }
+
+  /* pause autoplay on hover of carousel */
+  .carousel:hover .slides{ animation-play-state: paused; }
+
+
+
 
 
 ul.topnav {
