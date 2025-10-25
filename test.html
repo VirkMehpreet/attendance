@@ -115,97 +115,19 @@
 </section>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const slidesContainer = document.getElementById('slides');
-  const originalSlides = Array.from(slidesContainer.children);
-  const slideCount = originalSlides.length;
-
-  // clone nodes for smooth looping
-  const firstClone = originalSlides[0].cloneNode(true);
-  const lastClone  = originalSlides[slideCount - 1].cloneNode(true);
-
-  slidesContainer.appendChild(firstClone);
-  slidesContainer.insertBefore(lastClone, slidesContainer.firstChild);
-
-  // now allSlides includes clones at positions 0 and last
-  let allSlides = Array.from(slidesContainer.children); // length = slideCount + 2
-
-  // set initial index to 1 (the first real slide)
-  let index = 1;
-  const slideWidth = () => slidesContainer.getBoundingClientRect().width / (allSlides.length); 
-  // We will use percentages for translateX, so we don't need exact pixel width.
-
-  // place container at first real slide
-  slidesContainer.style.transform = `translateX(-${index * 100}%)`;
-
-  // create dots
-  const dotsContainer = document.getElementById('dots');
-  for (let i = 0; i < slideCount; i++){
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.dataset.slide = i; // maps to real slide index (0..slideCount-1)
-    dotsContainer.appendChild(d);
-  }
-  const dots = Array.from(dotsContainer.children);
-
-  // helpers
-  function updateDots() {
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === ((index - 1 + slideCount) % slideCount)));
-  }
-
-  function moveToIndex(nextIndex, withTransition = true) {
-    if (withTransition) slidesContainer.style.transition = 'transform 0.6s ease-in-out';
-    else slidesContainer.style.transition = 'none';
-    slidesContainer.style.transform = `translateX(-${nextIndex * 100}%)`;
-    index = nextIndex;
-    updateDots();
-  }
-
-  // next / prev logic
-  function nextSlide() { moveToIndex(index + 1, true); }
-  function prevSlide() { moveToIndex(index - 1, true); }
-
-  // when transition ends, if we are on a clone, jump to the corresponding real slide without animation
-  slidesContainer.addEventListener('transitionend', () => {
-    // if landed on the clone after the last slide (index === slideCount + 1), jump to index=1
-    if (index === slideCount + 1) {
-      moveToIndex(1, false);
-    }
-    // if landed on the left clone (index === 0), jump to real last (index = slideCount)
-    if (index === 0) {
-      moveToIndex(slideCount, false);
-    }
-  });
-
-  // dots click
-  dots.forEach((dot, i) => {
-    dot.addEventListener('click', () => {
-      // i is 0..slideCount-1; real slide index = i+1
-      moveToIndex(i + 1, true);
-      restartAutoplay();
-    });
-  });
-
-  // buttons
-  document.getElementById('next').addEventListener('click', () => {
-    nextSlide();
-    restartAutoplay();
-  });
-  document.getElementById('prev').addEventListener('click', () => {
-    prevSlide();
-    restartAutoplay();
-  });
-
-  // autoplay with pause on hover
-  let autoplayInterval = 4500;
+  // autoplay with pause on hover & visibility
+  let autoplayInterval = 2500; // faster: 2.5 seconds
   let timer = null;
+
   function startAutoplay(){
     stopAutoplay();
     timer = setInterval(() => nextSlide(), autoplayInterval);
   }
+
   function stopAutoplay(){
     if (timer) { clearInterval(timer); timer = null; }
   }
+
   function restartAutoplay(){ stopAutoplay(); startAutoplay(); }
 
   // pause on hover (the whole carousel-wrap)
@@ -213,30 +135,15 @@ document.addEventListener('DOMContentLoaded', () => {
   wrap.addEventListener('mouseenter', stopAutoplay);
   wrap.addEventListener('mouseleave', startAutoplay);
 
-  // start
+  // pause when tab is not visible
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopAutoplay();
+    else startAutoplay();
+  });
+
+  // start autoplay initially
   startAutoplay();
 
-  // Defensive: if window resized, ensure transform still expresses percent (no change needed),
-  // but we can force a reapply to be safe:
-  window.addEventListener('resize', () => {
-    moveToIndex(index, false);
-  });
-
-  // Keyboard arrows (optional)
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') { nextSlide(); restartAutoplay(); }
-    if (e.key === 'ArrowLeft')  { prevSlide(); restartAutoplay(); }
-  });
-
-  // Accessibility: click handling on dots with keyboard
-  dots.forEach(d => d.tabIndex = 0);
-  dots.forEach(d => d.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      d.click();
-    }
-  }));
-});
 </script>
 </body>
 </html>
