@@ -1,126 +1,165 @@
-body {
-    font-family: "Poppins", sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: #0d1b2a;
-    margin: 0;
+:root {
+    --w: 520px;
+    --h: 240px;
+    --accent: #e0a82e;
+    --bg: #1b263b;
   }
 
-  .carousel {
-    position: relative;
-    width: 420px;
-    height: 200px;
-    overflow: hidden;
-    border-radius: 16px;
-    background: #1b263b;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d1b2a;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     color: #f0e9d2;
   }
 
+  /* Carousel container */
+  .carousel {
+    width: var(--w);
+    height: var(--h);
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--bg);
+    padding: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  }
+
+  /* Put radios BEFORE the .slides in DOM so sibling selectors work */
+  /* Hide radios off-screen (works even if display:none is overridden) */
+  .carousel input[type="radio"] {
+    position: absolute !important;
+    left: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Slides wrapper: MUST be flex so slides sit side-by-side */
   .slides {
     display: flex;
-    width: 300%;
+    width: 300%;            /* 3 slides -> 300% */
     height: 100%;
-    animation: slide 12s infinite;
+    transform: translateX(0);
+    transition: transform 0.6s cubic-bezier(.22,.9,.3,1);
+    animation: autoplay 12s linear infinite;
+  }
+
+  /* Each single slide */
+  .slide {
+    flex: 0 0 33.3333%;     /* so three equal columns inside 300% container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
   }
 
   .quote {
     width: 100%;
-    flex-shrink: 0;
-    text-align: center;
-    padding: 30px;
-    box-sizing: border-box;
+    padding: 16px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
   }
 
-  .quote p {
-    font-style: italic;
-    font-size: 1.1rem;
-  }
+  .quote p { margin: 0; font-style: italic; font-size: 1.05rem; line-height: 1.4; }
+  .quote h3 { margin-top: 12px; color: var(--accent); font-weight: 600; }
 
-  .quote h3 {
-    color: #e0a82e;
-    font-weight: 500;
-    margin-top: 15px;
-  }
+  /* Manual control via radios: when a radio is checked, force the transform */
+  #r1:checked ~ .slides { animation-play-state: paused; transform: translateX(0%); }
+  #r2:checked ~ .slides { animation-play-state: paused; transform: translateX(-33.3333%); }
+  #r3:checked ~ .slides { animation-play-state: paused; transform: translateX(-66.6666%); }
 
   /* Dots */
   .dots {
     position: absolute;
-    bottom: 10px;
     left: 0;
     right: 0;
-    text-align: center;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    pointer-events: auto;
   }
-
   .dot {
-    display: inline-block;
     width: 10px;
     height: 10px;
-    margin: 0 5px;
-    background: #888;
+    background: #808c98;
     border-radius: 50%;
     cursor: pointer;
-    transition: background 0.3s;
+    display: inline-block;
+    transition: transform .12s, background .12s;
   }
+  .dot:hover { transform: scale(1.08); }
 
-  input[type="radio"] {
-    display: none;
-  }
-
-  #r1:checked ~ .slides {
-    transform: translateX(0);
-  }
-  #r2:checked ~ .slides {
-    transform: translateX(-100%);
-  }
-  #r3:checked ~ .slides {
-    transform: translateX(-200%);
-  }
-
+  /* Highlight active dot */
   #r1:checked ~ .dots label[for="r1"],
   #r2:checked ~ .dots label[for="r2"],
   #r3:checked ~ .dots label[for="r3"] {
-    background: #e0a82e;
+    background: var(--accent);
+    transform: scale(1.12);
   }
 
-  /* Arrows */
+  /* Arrows (we'll show a pair matching the current slide using the radio checked selectors) */
   .arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 2rem;
-    color: #e0a82e;
-    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     user-select: none;
-    transition: 0.3s;
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 20px;
+    background: rgba(0,0,0,0.06);
+  }
+  .arrow:hover { background: rgba(0,0,0,0.12); color: #fff; }
+  .prev { left: 12px; }
+  .next { right: 12px; }
+
+  /* We include all arrow labels but show only those that correspond to the currently checked radio */
+  .arrows label { display: none; }
+
+  /* For r1: prev -> r3, next -> r2 */
+  #r1:checked ~ .arrows label[for="r3"],
+  #r1:checked ~ .arrows label[for="r2"] { display:flex; }
+
+  /* For r2: prev -> r1, next -> r3 */
+  #r2:checked ~ .arrows label[for="r1"],
+  #r2:checked ~ .arrows label[for="r3"] { display:flex; }
+
+  /* For r3: prev -> r2, next -> r1 */
+  #r3:checked ~ .arrows label[for="r2"],
+  #r3:checked ~ .arrows label[for="r1"] { display:flex; }
+
+  /* Autoplay keyframes: show slide1 -> slide2 -> slide3 -> back */
+  @keyframes autoplay {
+    0%   { transform: translateX(0%); }
+    25%  { transform: translateX(0%); }
+    33%  { transform: translateX(-33.3333%); }
+    58%  { transform: translateX(-33.3333%); }
+    66%  { transform: translateX(-66.6666%); }
+    91%  { transform: translateX(-66.6666%); }
+    100% { transform: translateX(0%); }
   }
 
-  .arrow:hover {
-    color: #fff;
-  }
+  /* Pause on hover */
+  .carousel:hover .slides { animation-play-state: paused; }
 
-  .prev {
-    left: 15px;
+  /* small responsive tweak */
+  @media (max-width: 560px) {
+    :root { --w: 92vw; --h: 260px; }
   }
-
-  .next {
-    right: 15px;
-  }
-
-  /* Animation for auto sliding */
-  @keyframes slide {
-    0%, 20% { transform: translateX(0); }
-    25%, 45% { transform: translateX(-100%); }
-    50%, 70% { transform: translateX(-200%); }
-    75%, 100% { transform: translateX(0); }
-  }
-
-  .carousel:hover .slides {
-    animation-play-state: paused;
-  }
-
 
 
 
