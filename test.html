@@ -115,8 +115,62 @@
 </section>
 
 <script>
-  // autoplay with pause on hover & visibility
-  let autoplayInterval = 2500; // faster: 2.5 seconds
+ document.addEventListener('DOMContentLoaded', () => {
+  const slidesContainer = document.getElementById('slides');
+  const originalSlides = Array.from(slidesContainer.children);
+  const slideCount = originalSlides.length;
+
+  // clone nodes for smooth looping
+  const firstClone = originalSlides[0].cloneNode(true);
+  const lastClone  = originalSlides[slideCount - 1].cloneNode(true);
+  slidesContainer.appendChild(firstClone);
+  slidesContainer.insertBefore(lastClone, slidesContainer.firstChild);
+
+  let allSlides = Array.from(slidesContainer.children); // includes clones
+  let index = 1;
+  slidesContainer.style.transform = `translateX(-${index * 100}%)`;
+
+  // create dots
+  const dotsContainer = document.getElementById('dots');
+  for (let i = 0; i < slideCount; i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.dataset.slide = i;
+    dotsContainer.appendChild(d);
+  }
+  const dots = Array.from(dotsContainer.children);
+
+  function updateDots() {
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === ((index - 1 + slideCount) % slideCount)));
+  }
+
+  function moveToIndex(nextIndex, withTransition = true) {
+    if (withTransition) slidesContainer.style.transition = 'transform 0.6s ease-in-out';
+    else slidesContainer.style.transition = 'none';
+    slidesContainer.style.transform = `translateX(-${nextIndex * 100}%)`;
+    index = nextIndex;
+    updateDots();
+  }
+
+  function nextSlide() { moveToIndex(index + 1, true); }
+  function prevSlide() { moveToIndex(index - 1, true); }
+
+  slidesContainer.addEventListener('transitionend', () => {
+    if (index === slideCount + 1) moveToIndex(1, false);
+    if (index === 0) moveToIndex(slideCount, false);
+  });
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => { moveToIndex(i + 1, true); restartAutoplay(); });
+    dot.tabIndex = 0;
+    dot.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dot.click(); }});
+  });
+
+  document.getElementById('next').addEventListener('click', () => { nextSlide(); restartAutoplay(); });
+  document.getElementById('prev').addEventListener('click', () => { prevSlide(); restartAutoplay(); });
+
+  // autoplay with pause on hover & tab visibility
+  let autoplayInterval = 2500; // faster
   let timer = null;
 
   function startAutoplay(){
@@ -130,20 +184,25 @@
 
   function restartAutoplay(){ stopAutoplay(); startAutoplay(); }
 
-  // pause on hover (the whole carousel-wrap)
   const wrap = document.querySelector('.carousel-wrap');
   wrap.addEventListener('mouseenter', stopAutoplay);
   wrap.addEventListener('mouseleave', startAutoplay);
 
-  // pause when tab is not visible
+  // pause when tab inactive
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopAutoplay();
     else startAutoplay();
   });
 
-  // start autoplay initially
   startAutoplay();
 
+  window.addEventListener('resize', () => { moveToIndex(index, false); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { nextSlide(); restartAutoplay(); }
+    if (e.key === 'ArrowLeft')  { prevSlide(); restartAutoplay(); }
+  });
+});
 </script>
 </body>
 </html>
