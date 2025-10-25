@@ -11,38 +11,58 @@
   
 <body>
   <div class="carousel">
-  <!-- Radio buttons for manual control -->
-  <input type="radio" name="r" id="r1" checked>
-  <input type="radio" name="r" id="r2">
-  <input type="radio" name="r" id="r3">
 
-  <!-- Quotes -->
-  <div class="slides">
-    <div class="quote">
-      <p>“The best way to predict the future is to invent it.”</p>
-      <h3>– Alan Kay</h3>
+    <!-- Put the radios BEFORE the .slides so the general sibling (~) selector works -->
+    <input type="radio" name="slides" id="r1" checked>
+    <input type="radio" name="slides" id="r2">
+    <input type="radio" name="slides" id="r3">
+  
+    <!-- sliding container -->
+    <div class="slides">
+      <div class="slide">
+        <div class="quote">
+          <p>“The best way to predict the future is to invent it.”</p>
+          <h3>– Alan Kay</h3>
+        </div>
+      </div>
+  
+      <div class="slide">
+        <div class="quote">
+          <p>“In the middle of difficulty lies opportunity.”</p>
+          <h3>– Albert Einstein</h3>
+        </div>
+      </div>
+  
+      <div class="slide">
+        <div class="quote">
+          <p>“Strive not to be a success, but rather to be of value.”</p>
+          <h3>– Albert Einstein</h3>
+        </div>
+      </div>
     </div>
-    <div class="quote">
-      <p>“In the middle of difficulty lies opportunity.”</p>
-      <h3>– Albert Einstein</h3>
+  
+    <!-- arrows: each label targets a radio -->
+    <div class="arrows" aria-hidden="true">
+      <!-- arrows for r1 -->
+      <label class="arrow prev" for="r3" title="Previous">‹</label>
+      <label class="arrow next" for="r2" title="Next">›</label>
+  
+      <!-- arrows for r2 -->
+      <label class="arrow prev" for="r1" title="Previous">‹</label>
+      <label class="arrow next" for="r3" title="Next">›</label>
+  
+      <!-- arrows for r3 -->
+      <label class="arrow prev" for="r2" title="Previous">‹</label>
+      <label class="arrow next" for="r1" title="Next">›</label>
     </div>
-    <div class="quote">
-      <p>“Strive not to be a success, but rather to be of value.”</p>
-      <h3>– Albert Einstein</h3>
+  
+    <!-- dots -->
+    <div class="dots" aria-hidden="false">
+      <label class="dot" for="r1" title="Slide 1"></label>
+      <label class="dot" for="r2" title="Slide 2"></label>
+      <label class="dot" for="r3" title="Slide 3"></label>
     </div>
   </div>
-
-  <!-- Navigation Arrows -->
-  <label for="r3" class="arrow prev">&#10094;</label>
-  <label for="r2" class="arrow next">&#10095;</label>
-
-  <!-- Dots -->
-  <div class="dots">
-    <label for="r1" class="dot"></label>
-    <label for="r2" class="dot"></label>
-    <label for="r3" class="dot"></label>
-  </div>
-</div>
 
 
 
