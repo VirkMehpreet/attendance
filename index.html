@@ -11,61 +11,38 @@
   
 <body>
   <div class="carousel">
+  <!-- Radio buttons for manual control -->
+  <input type="radio" name="r" id="r1" checked>
+  <input type="radio" name="r" id="r2">
+  <input type="radio" name="r" id="r3">
 
-  <!-- Radios (slide1 checked by default) -->
-  <input type="radio" name="slides" id="slide1" checked>
-  <input type="radio" name="slides" id="slide2">
-  <input type="radio" name="slides" id="slide3">
-
-  <!-- Slides -->
+  <!-- Quotes -->
   <div class="slides">
-    <div class="slide">
-      <div class="quote">
-        <p>“The best way to predict the future is to invent it.”</p>
-        <h3>– Alan Kay</h3>
-      </div>
+    <div class="quote">
+      <p>“The best way to predict the future is to invent it.”</p>
+      <h3>– Alan Kay</h3>
     </div>
-
-    <div class="slide">
-      <div class="quote">
-        <p>“In the middle of difficulty lies opportunity.”</p>
-        <h3>– Albert Einstein</h3>
-      </div>
+    <div class="quote">
+      <p>“In the middle of difficulty lies opportunity.”</p>
+      <h3>– Albert Einstein</h3>
     </div>
-
-    <div class="slide">
-      <div class="quote">
-        <p>“Strive not to be a success, but rather to be of value.”</p>
-        <h3>– Albert Einstein</h3>
-      </div>
+    <div class="quote">
+      <p>“Strive not to be a success, but rather to be of value.”</p>
+      <h3>– Albert Einstein</h3>
     </div>
   </div>
+
+  <!-- Navigation Arrows -->
+  <label for="r3" class="arrow prev">&#10094;</label>
+  <label for="r2" class="arrow next">&#10095;</label>
 
   <!-- Dots -->
-  <div class="dots" aria-hidden="false">
-    <label class="dot" for="slide1" title="Slide 1"></label>
-    <label class="dot" for="slide2" title="Slide 2"></label>
-    <label class="dot" for="slide3" title="Slide 3"></label>
+  <div class="dots">
+    <label for="r1" class="dot"></label>
+    <label for="r2" class="dot"></label>
+    <label for="r3" class="dot"></label>
   </div>
-
-  <!-- Arrows — each label targets a radio to change slides.
-       We include pairs for every slide so we can show the correct mapping (prev->wrap, next->wrap). -->
-  <div class="arrows">
-    <!-- arrows visible when slide1 checked -->
-    <label class="arrow prev" for="slide3" title="Previous (to slide 3)">‹</label>
-    <label class="arrow next" for="slide2" title="Next (to slide 2)">›</label>
-
-    <!-- arrows visible when slide2 checked -->
-    <label class="arrow prev" for="slide1" title="Previous (to slide 1)">‹</label>
-    <label class="arrow next" for="slide3" title="Next (to slide 3)">›</label>
-
-    <!-- arrows visible when slide3 checked -->
-    <label class="arrow prev" for="slide2" title="Previous (to slide 2)">‹</label>
-    <label class="arrow next" for="slide1" title="Next (to slide 1)">›</label>
-  </div>
-
 </div>
-
 
 
 
