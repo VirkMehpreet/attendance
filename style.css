@@ -1,5 +1,129 @@
+body {
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #0d1b2a;
+  color: #f0e9d2;
+  margin: 0;
+}
 
-body {margin: 0;}
+.carousel {
+  width: 400px;
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #1b263b;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Hide radio inputs */
+input[type="radio"] {
+  display: none;
+}
+
+/* Container for all slides */
+.slides {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transition: transform 1s ease;
+}
+
+/* Each quote */
+.quote {
+  width: 100%;
+  padding: 40px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.quote p {
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+.quote h3 {
+  margin-top: 15px;
+  font-weight: 400;
+  color: #e0a82e;
+}
+
+/* Slide position control via radio buttons */
+#slide1:checked ~ .slides {
+  transform: translateX(0);
+}
+#slide2:checked ~ .slides {
+  transform: translateX(-100%);
+}
+#slide3:checked ~ .slides {
+  transform: translateX(-200%);
+}
+
+/* Navigation dots */
+.nav-dots {
+  position: absolute;
+  bottom: 15px;
+  width: 100%;
+  text-align: center;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #aaa;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#slide1:checked ~ .nav-dots label[for="slide1"],
+#slide2:checked ~ .nav-dots label[for="slide2"],
+#slide3:checked ~ .nav-dots label[for="slide3"] {
+  background: #e0a82e;
+}
+
+/* Arrows */
+.arrows label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  color: #e0a82e;
+  cursor: pointer;
+  transition: 0.3s;
+  user-select: none;
+}
+
+.arrows .prev {
+  left: 15px;
+}
+
+.arrows .next {
+  right: 15px;
+}
+
+.arrows label:hover {
+  color: #fff;
+}
+
+/* Auto-slide animation */
+@keyframes auto {
+  0%, 33%   { transform: translateX(0); }
+  34%, 66%  { transform: translateX(-100%); }
+  67%, 99%  { transform: translateX(-200%); }
+  100%      { transform: translateX(0); }
+}
+
+/* Auto-play effect */
+.slides {
+  animation: auto 12s infinite;
+}
+
 
 ul.topnav {
   list-style-type: none;
