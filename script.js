@@ -17,3 +17,15 @@ student_names.forEach(name => {
   namesList.appendChild(document.createElement("br"));
   
 });
+
+
+
+
+
+const radios = document.querySelectorAll('input[name="slides"]');
+    let i = 0;
+    setInterval(() => {
+      radios[i].checked = false;
+      i = (i + 1) % radios.length;
+      radios[i].checked = true;
+    }, 4000);
